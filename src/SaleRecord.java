@@ -82,4 +82,5 @@ public class SaleRecord {
     public int hashCode(){
         return customerName.substring(customerName.lastIndexOf(" ") + 1).hashCode();
     }
+
 }

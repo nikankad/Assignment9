@@ -20,7 +20,6 @@ public class Main {
                 // Gets the customer last name from csv
                 String customerLastName = data[2].substring(data[2].lastIndexOf(" ") + 1);
                 hashTable.put(customerLastName, saleRecord);
-//                System.out.println(hashTable.hashCode());
                 arrayList.add(saleRecord);
                 // Insert the SaleRecord into the corresponding AVL tree based on Car Make
             }
@@ -29,6 +28,8 @@ public class Main {
         }
     }
 
+
+    
 
     public static void main(String[] args) {
         insert("s");
