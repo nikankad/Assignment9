@@ -81,11 +81,6 @@ public class SaleRecord {
 
     }
 
-    public String getSalePersonLastName(){
-        return salesPerson.substring(salesPerson.lastIndexOf(" ") + 1);
-
-    }
-
     @Override
     public int hashCode(){
         return customerName.substring(customerName.lastIndexOf(" ") + 1).hashCode();
