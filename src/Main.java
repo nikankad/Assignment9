@@ -15,11 +15,12 @@ import static java.lang.Integer.parseInt;
  * Additionally, the hash map is resized when the loading factor exceeds a specified threshold.
  */
 public class Main {
-    // Constant variables
+
+    //constant variables
     private static final int DEFAULT_CAPACITY = 16;
     private static final float DEFAULT_LOAD_FACTOR = 2f;
 
-    // Customer last name will be the key
+    //customer last name will be key
     static HashMap<String, LinkedList<SaleRecord>> hashMap = new HashMap<>(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
     static ArrayList<SaleRecord> arrayList = new ArrayList<>();
 
@@ -113,7 +114,7 @@ public class Main {
                     hashMap.put(customerLastName, new LinkedList<>());
                 }
 
-                // Add the sale record to the linked list at the specified key
+                //add the sale record to the linked list at the specified key
                 hashMap.get(customerLastName).add(saleRecord);
                 arrayList.add(saleRecord);
 
@@ -121,13 +122,15 @@ public class Main {
                 int tableSize = hashMap.size(); // Get the current table size
                 int numberOfElements = arrayList.size();
 
-                // Loading factor L = N/T (number of entries / table size)
+                //Loading factor L = N/T (number of entries / table size)
                 double loadFactor = (double) numberOfElements / tableSize;
 
-                if (loadFactor > 2) {
+                if(loadFactor > 2){
                     resize();
                 }
+
             }
+            System.out.println(hashMap);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -138,17 +141,18 @@ public class Main {
      * Doubles the size of the hash map and rehashes existing elements into the new map.
      */
     private static void resize() {
+
         int newSize = hashMap.size() * 2;
         HashMap<String, LinkedList<SaleRecord>> newHashMap = new HashMap<>(newSize, DEFAULT_LOAD_FACTOR);
         // Rehash existing elements into the new hash map
-        for (HashMap.Entry<String, LinkedList<SaleRecord>> entry : hashMap.entrySet()) {
-            String key = entry.getKey();
-            LinkedList<SaleRecord> value = entry.getValue();
+        for (String key : hashMap.keySet()) {
+            LinkedList<SaleRecord> value = hashMap.get(key);
             newHashMap.put(key, value);
         }
 
         // Replace the old hash map with the new one
         hashMap = newHashMap;
+
     }
 
     /**
@@ -207,4 +211,5 @@ public class Main {
 
 //        System.out.println("Average number of comparisons: " + comp + " table size: " + hashMap.size());
     }
+
 }

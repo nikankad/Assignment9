@@ -88,7 +88,7 @@ public class SaleRecord {
 
     @Override
     public int hashCode(){
-        return getCustomerLastName().hashCode();
+        return customerName.substring(customerName.lastIndexOf(" ") + 1).hashCode();
     }
 
 }
