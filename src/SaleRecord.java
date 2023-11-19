@@ -76,9 +76,14 @@ public class SaleRecord {
         return comissionEarned;
     }
 
+    public String getCustomerLastName(){
+        return customerName.substring(customerName.lastIndexOf(" ") + 1);
+
+    }
+
     @Override
     public int hashCode(){
-        return customerName.substring(customerName.lastIndexOf(" ") + 1).hashCode();
+        return getCustomerLastName().hashCode();
     }
 
 }
