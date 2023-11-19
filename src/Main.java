@@ -1,9 +1,12 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+
+import static java.lang.Integer.parseInt;
 
 /**
  * The Main class represents the main program for processing SaleRecord data.
@@ -25,14 +28,83 @@ public class Main {
      *
      * @param csvFile the path to the CSV file containing SaleRecord data
      */
-    public static void insert(String csvFile) {
+
+    public Main() {
+        hashMap = new HashMap<>(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
+        arrayList = new ArrayList<>();
+    }
+
+
+    public void readCSVAndBuildHashTable(String filePath, String key, int experimentNumber) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            br.readLine(); // Skip the header row
+
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                System.out.println(data[5]);
+                final SaleRecord saleRecord = new SaleRecord(data[0], data[1], data[2], data[3], data[4], parseInt(data[5]), Double.parseDouble(data[6]), Double.parseDouble(data[7]), Double.parseDouble(data[8]));
+
+                arrayList.add(saleRecord);
+                addToHashTable(saleRecord, key, experimentNumber);
+
+                // Assuming you have a HashMap<String, SaleRecord> customerLastNameMap
+                int tableSize = hashMap.size(); // Get the current table size
+                int numberOfElements = arrayList.size();
+
+                // Loading factor L = N/T (number of entries / table size)
+                double loadFactor = (double) numberOfElements / tableSize;
+
+
+
+                if (loadFactor > 2) {
+                    resize();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void addToHashTable(SaleRecord record, String key, int experimentNumber) {
+        String keyValue = getKey(record, key, experimentNumber);
+        int hashCode = getHashCode(keyValue);
+
+        String customerLastName = record.getCustomerLastName();
+        if (!hashMap.containsKey(customerLastName)) {
+            hashMap.put(key, new LinkedList<>());
+        }
+
+        // Add the sale record to the linked list at the specified key
+        hashMap.get(customerLastName).add(record);
+    }
+
+    private int getHashCode(String value) {
+        // Implement this method to get the hash code based on the experiment number
+        return value.hashCode();
+    }
+
+    private String getKey(SaleRecord record, String key, int experimentNumber) {
+        // Implement this method to get the key based on the specified field (customer or salesperson last name)
+        if(experimentNumber == 1){
+            return record.getCustomerLastName();
+        }else if(experimentNumber == 2){
+            return  record.getSalePersonLastName();
+        }
+        return null;
+    }
+
+
+
+
+
+    public static void insert(String csvFile, String key) {
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             br.readLine(); // Skip the header row
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
                 // Assuming the order of columns in the CSV matches the constructor
-                final SaleRecord saleRecord = new SaleRecord(data[0], data[1], data[2], data[3], data[4], Integer.parseInt(data[5]), Double.parseDouble(data[6]), Double.parseDouble(data[7]), Double.parseDouble(data[8]));
+                final SaleRecord saleRecord = new SaleRecord(data[0], data[1], data[2], data[3], data[4], parseInt(data[5]), Double.parseDouble(data[6]), Double.parseDouble(data[7]), Double.parseDouble(data[8]));
 
                 // Gets the customer last name from CSV (used in the first experiment)
                 // Handles collisions
@@ -89,13 +161,16 @@ public class Main {
     public static double search(HashMap<String, LinkedList<SaleRecord>> hashMap, ArrayList<SaleRecord> arrayList) {
         int totalComparisons = 0;
         int numberOfSearches = arrayList.size();
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
         for (SaleRecord record : arrayList) {
             String keyToSearch = record.getCustomerLastName();
             // Search the hash map
             int comparisons = searchInHashMap(hashMap, keyToSearch);
             totalComparisons += comparisons;
         }
-        return (double) totalComparisons / numberOfSearches;
+
+        //rounds the average to 2 decimal values
+        return Double.parseDouble(decimalFormat.format((double) totalComparisons / numberOfSearches));
     }
 
     /**
@@ -122,9 +197,14 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        insert("src/car_sales_data.csv");
-        double comp = search(hashMap, arrayList);
 
-        System.out.println("Average number of compirasons: " + comp + " table size: " + hashMap.size());
+
+        Main experiment3 = new Main();
+        experiment3.readCSVAndBuildHashTable("src/small_sample.csv", "customerLastName", 1);
+
+
+
+
+//        System.out.println("Average number of comparisons: " + comp + " table size: " + hashMap.size());
     }
 }
