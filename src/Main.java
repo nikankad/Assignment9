@@ -12,19 +12,15 @@ import java.util.LinkedList;
  * Additionally, the hash map is resized when the loading factor exceeds a specified threshold.
  */
 public class Main {
+    static final String file = "src/car_sales_data.csv";
     // Constant variables
     private static final int DEFAULT_CAPACITY = 16;
-    private static final float DEFAULT_LOAD_FACTOR = 2f;
 
     // Customer last name will be the key
-
+    private static final float DEFAULT_LOAD_FACTOR = 2f;
     static ArrayList<SaleRecord> arrayList = new ArrayList<>();
     static int experiment = 0;
     static HashMap<String, LinkedList<SaleRecord>> hashMap;
-
-
-    static String file = "src/car_sales_data.csv";
-
     static long secondsTaken = 0;
 
     public Main(int experiment) {
@@ -114,15 +110,16 @@ public class Main {
      */
     private static int searchInHashMap(HashMap<String, LinkedList<SaleRecord>> hashMap, String keyToSearch) {
         int comp = 0;
-        // Check if the key is present in the hash map
-        comp++; // Checking if it is in the hash map is one comparison
+        for (HashMap.Entry<String, LinkedList<SaleRecord>> entry : hashMap.entrySet()) {
+            LinkedList<SaleRecord> namesList = entry.getValue();
+            if (namesList.equals(hashMap.get(keyToSearch))) {
+                comp++;
+                return comp;
+            } else {
+                comp++;
+            }
 
-        // Get the linked list matching the key
-//        LinkedList<SaleRecord> saleRecordList = hashMap.get(keyToSearch);
-//        for (SaleRecord saleRecord : saleRecordList) {
-//            comp++;
-//            // Additional logic for matching SaleRecord attributes if needed
-//        }
+        }
         return comp;
     }
 
