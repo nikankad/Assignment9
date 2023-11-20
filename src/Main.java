@@ -20,44 +20,36 @@ public class Main {
     static HashMap<String, LinkedList<SaleRecord>> hashMap = new HashMap<>(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
     static ArrayList<SaleRecord> arrayList = new ArrayList<>();
 
-    /**
-     * Inserts SaleRecord data from a CSV file into the hash map and the array list.
-     *
-     * @param csvFile the path to the CSV file containing SaleRecord data
-     */
-    public static void insert(String csvFile) {
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            br.readLine(); // Skip the header row
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                // Assuming the order of columns in the CSV matches the constructor
-                final SaleRecord saleRecord = new SaleRecord(data[0], data[1], data[2], data[3], data[4], Integer.parseInt(data[5]), Double.parseDouble(data[6]), Double.parseDouble(data[7]), Double.parseDouble(data[8]));
+    static int experiment = 0;
 
-                // Gets the customer last name from CSV (used in the first experiment)
-                // Handles collisions
-                String customerLastName = saleRecord.getCustomerLastName();
-                if (!hashMap.containsKey(customerLastName)) {
-                    hashMap.put(customerLastName, new LinkedList<>());
-                }
 
-                // Add the sale record to the linked list at the specified key
-                hashMap.get(customerLastName).add(saleRecord);
-                arrayList.add(saleRecord);
+    public Main(int experiment) {
+        hashMap = new HashMap<>(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
+        Main.experiment = experiment;
+    }
 
-                // Assuming you have a HashMap<String, SaleRecord> customerLastNameMap
-                int tableSize = hashMap.size(); // Get the current table size
-                int numberOfElements = arrayList.size();
+    public static void addToHashMap(SaleRecord saleRecord, int experiment) {
 
-                // Loading factor L = N/T (number of entries / table size)
-                double loadFactor = (double) numberOfElements / tableSize;
+        String mapKey = saleRecord.getCustomerLastName();
+        if (experiment == 2) {
+            mapKey = saleRecord.getSalePersonLastName();
+        }
+        if (!hashMap.containsKey(mapKey)) {
+            hashMap.put(mapKey, new LinkedList<>());
+        }
 
-                if (loadFactor > 2) {
-                    resize();
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        // Add the sale record to the linked list at the specified key
+        hashMap.get(mapKey).add(saleRecord);
+
+        // Assuming you have a HashMap<String, SaleRecord> customerLastNameMap
+        int tableSize = hashMap.size(); // Get the current table size
+        int numberOfElements = arrayList.size();
+
+        // Loading factor L = N/T (number of entries / table size)
+        double loadFactor = (double) numberOfElements / tableSize;
+
+        if (loadFactor > 2) {
+            resize();
         }
     }
 
@@ -89,11 +81,21 @@ public class Main {
     public static double search(HashMap<String, LinkedList<SaleRecord>> hashMap, ArrayList<SaleRecord> arrayList) {
         int totalComparisons = 0;
         int numberOfSearches = arrayList.size();
-        for (SaleRecord record : arrayList) {
-            String keyToSearch = record.getCustomerLastName();
-            // Search the hash map
-            int comparisons = searchInHashMap(hashMap, keyToSearch);
-            totalComparisons += comparisons;
+        if (experiment == 1) {
+            for (SaleRecord record : arrayList) {
+                String keyToSearch = record.getCustomerLastName();
+                // Search the hash map
+                int comparisons = searchInHashMap(hashMap, keyToSearch);
+                totalComparisons += comparisons;
+            }
+
+        } else if (experiment == 2) {
+            for (SaleRecord record : arrayList) {
+                String keyToSearch = record.getSalePersonLastName();
+                // Search the hash map
+                int comparisons = searchInHashMap(hashMap, keyToSearch);
+                totalComparisons += comparisons;
+            }
         }
         return (double) totalComparisons / numberOfSearches;
     }
@@ -122,9 +124,37 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        insert("src/car_sales_data.csv");
+        Main experiment1 = new Main(2);
+        experiment1.insert("src/small_sample.csv");
         double comp = search(hashMap, arrayList);
 
+
         System.out.println("Average number of compirasons: " + comp + " table size: " + hashMap.size());
+        System.out.println(hashMap);
+    }
+
+    /**
+     * Inserts SaleRecord data from a CSV file into the hash map and the array list.
+     *
+     * @param csvFile the path to the CSV file containing SaleRecord data
+     */
+    public void insert(String csvFile) {
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            br.readLine(); // Skip the header row
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                // Assuming the order of columns in the CSV matches the constructor
+                final SaleRecord saleRecord = new SaleRecord(data[0], data[1], data[2], data[3], data[4], Integer.parseInt(data[5]), Double.parseDouble(data[6]), Double.parseDouble(data[7]), Double.parseDouble(data[8]));
+
+                // Gets the customer last name from CSV (used in the first experiment)
+                // Handles collisions
+                addToHashMap(saleRecord, experiment);
+                arrayList.add(saleRecord);
+
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
