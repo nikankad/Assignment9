@@ -17,16 +17,21 @@ public class Main {
     private static final float DEFAULT_LOAD_FACTOR = 2f;
 
     // Customer last name will be the key
-    static HashMap<String, LinkedList<SaleRecord>> hashMap = new HashMap<>(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
+
     static ArrayList<SaleRecord> arrayList = new ArrayList<>();
-
     static int experiment = 0;
+    static HashMap<String, LinkedList<SaleRecord>> hashMap;
 
+
+    static String file = "src/car_sales_data.csv";
+
+    static long secondsTaken = 0;
 
     public Main(int experiment) {
         hashMap = new HashMap<>(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
         Main.experiment = experiment;
     }
+
 
     public static void addToHashMap(SaleRecord saleRecord, int experiment) {
 
@@ -110,27 +115,33 @@ public class Main {
     private static int searchInHashMap(HashMap<String, LinkedList<SaleRecord>> hashMap, String keyToSearch) {
         int comp = 0;
         // Check if the key is present in the hash map
-        if (hashMap.containsKey(keyToSearch)) {
-            comp++; // Checking if it is in the hash map is one comparison
+        comp++; // Checking if it is in the hash map is one comparison
 
-            // Get the linked list matching the key
-            LinkedList<SaleRecord> saleRecordList = hashMap.get(keyToSearch);
-            for (SaleRecord saleRecord : saleRecordList) {
-                comp++;
-                // Additional logic for matching SaleRecord attributes if needed
-            }
-        }
+        // Get the linked list matching the key
+//        LinkedList<SaleRecord> saleRecordList = hashMap.get(keyToSearch);
+//        for (SaleRecord saleRecord : saleRecordList) {
+//            comp++;
+//            // Additional logic for matching SaleRecord attributes if needed
+//        }
         return comp;
     }
 
     public static void main(String[] args) {
-        Main experiment1 = new Main(2);
-        experiment1.insert("src/small_sample.csv");
+        printExperiment(1);
+        printExperiment(2);
+
+
+//        System.out.println("Average number of compirasons: " + comp + " table size: " + hashMap.size());
+    }
+
+    public static void printExperiment(int experimentNo) {
+        Main experiment = new Main(experimentNo);
+        experiment.insert(file);
         double comp = search(hashMap, arrayList);
 
-
-        System.out.println("Average number of compirasons: " + comp + " table size: " + hashMap.size());
-        System.out.println(hashMap);
+        System.out.println("Experiment: " + experimentNo);
+        System.out.println(secondsTaken + " milli seconds taken to build the HashMap");
+        System.out.println("Average number of comparisons: " + comp + " - table size " + hashMap.size());
     }
 
     /**
@@ -139,6 +150,7 @@ public class Main {
      * @param csvFile the path to the CSV file containing SaleRecord data
      */
     public void insert(String csvFile) {
+        long startTime = System.currentTimeMillis();
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             br.readLine(); // Skip the header row
             String line;
@@ -156,5 +168,9 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        long endTime = System.currentTimeMillis();
+
+        //this will be / 1000 for seconds
+        secondsTaken = (endTime - startTime);
     }
 }
