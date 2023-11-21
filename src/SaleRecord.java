@@ -13,6 +13,20 @@ public class SaleRecord {
     private final int experimentNo;
 
 
+    /**
+     * Constructs a SaleRecord object with the given parameters.
+     *
+     * @param date            The date of the sale.
+     * @param salePerson      The salesperson involved in the sale.
+     * @param customerName    The name of the customer.
+     * @param carMake         The make of the car.
+     * @param carModel        The model of the car.
+     * @param carYear         The year of the car.
+     * @param salePrice       The sale price of the car.
+     * @param comissionRate   The commission rate for the sale.
+     * @param comissionEarned The commission earned from the sale.
+     * @param experimentNo    The experiment number associated with the sale record.
+     */
     public SaleRecord(String date, String salePerson, String customerName, String carMake, String carModel, int carYear,
                       double salePrice, double comissionRate, double comissionEarned, int experimentNo) {
         this.date = date;
@@ -28,6 +42,12 @@ public class SaleRecord {
 
     }
 
+    /**
+     * Computes the hash value for a given last name using the sum of ASCII values of its characters.
+     *
+     * @param lastName The last name for which to calculate the hash value.
+     * @return The hash value based on the sum of ASCII values.
+     */
     public static int hashLastName(String lastName) {
         int hashVal = 0;
         for (char ch : lastName.toCharArray()) {
@@ -71,13 +91,6 @@ public class SaleRecord {
         return customerName;
     }
 
-    @Override
-    public String toString() {
-        return "{" + date + ", " + salesPerson + ", " + customerName + ", " + carMake + ", " + carModel + ", " + carYear +
-                ", " + salePrice
-                + ", " + comissionRate + ", " + comissionEarned + "}";
-    }
-
     public double getCommissionEarned() {
         return comissionEarned;
     }
@@ -86,6 +99,29 @@ public class SaleRecord {
         return customerName.substring(customerName.lastIndexOf(" ") + 1);
 
     }
+
+    public String getSalePersonLastName() {
+        return salesPerson.substring(salesPerson.lastIndexOf(" ") + 1);
+
+    }
+
+    /**
+     * Returns a string representation of the SaleRecord object.
+     *
+     * @return A string representation of the SaleRecord.
+     */
+    @Override
+    public String toString() {
+        return "{" + date + ", " + salesPerson + ", " + customerName + ", " + carMake + ", " + carModel + ", " + carYear +
+                ", " + salePrice
+                + ", " + comissionRate + ", " + comissionEarned + "}";
+    }
+
+    /**
+     * Computes the hash code for the SaleRecord based on the experiment number.
+     *
+     * @return The hash code for the SaleRecord.
+     */
 
     @Override
     public int hashCode() {
@@ -98,8 +134,5 @@ public class SaleRecord {
         }
     }
 
-    public String getSalePersonLastName() {
-        return salesPerson.substring(salesPerson.lastIndexOf(" ") + 1);
 
-    }
 }

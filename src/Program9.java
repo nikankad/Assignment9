@@ -22,11 +22,22 @@ public class Program9 {
     static HashMap<String, LinkedList<SaleRecord>> hashMap;
     static long secondsTaken = 0;
 
+    /**
+     * Constructs a new Program9 object for a specific experiment.
+     *
+     * @param experiment The experiment number.
+     */
     public Program9(int experiment) {
         hashMap = new HashMap<>(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
         Program9.experiment = experiment;
     }
 
+    /**
+     * Adds a SaleRecord to the hash map, handling collisions using chaining.
+     *
+     * @param saleRecord The SaleRecord to be added.
+     * @param experiment The experiment number.
+     */
 
     public static void addToHashMap(SaleRecord saleRecord, int experiment) {
 
@@ -88,7 +99,6 @@ public class Program9 {
                 int comparisons = searchInHashMap(hashMap, keyToSearch);
                 totalComparisons += comparisons;
             }
-
         } else if (experiment == 2) {
             for (SaleRecord record : arrayList) {
                 String keyToSearch = record.getSalePersonLastName();
@@ -148,20 +158,27 @@ public class Program9 {
 
     }
 
+    /**
+     * Prints the results of a specific experiment.
+     *
+     * @param experimentNo the experiment number
+     */
+
     public static void printExperiment(int experimentNo) {
         Program9 experiment = new Program9(experimentNo);
         experiment.insert(file, experimentNo);
         double comp = search(hashMap, arrayList);
 
         System.out.println("Experiment: " + experimentNo);
-        System.out.println((secondsTaken / 1000) + " seconds taken to build the HashMap");
+        System.out.println(secondsTaken + " seconds taken to build the HashMap");
         System.out.println("Average number of comparisons: " + comp + " - table size " + hashMap.size());
     }
 
     /**
      * Inserts SaleRecord data from a CSV file into the hash map and the array list.
      *
-     * @param csvFile the path to the CSV file containing SaleRecord data
+     * @param csvFile      the path to the CSV file containing SaleRecord data
+     * @param experimentNo the experiment number
      */
     public void insert(String csvFile, int experimentNo) {
         long startTime = System.currentTimeMillis();
@@ -187,6 +204,6 @@ public class Program9 {
         long endTime = System.currentTimeMillis();
 
         //this will be / 1000 for seconds
-        secondsTaken = (endTime - startTime);
+        secondsTaken = (endTime - startTime) / 1000;
     }
 }
