@@ -1,4 +1,3 @@
-
 public class SaleRecord {
     private final String date;
     private final String salesPerson;
@@ -11,9 +10,11 @@ public class SaleRecord {
     private final double comissionRate;
     private final double comissionEarned;
 
+    private final int experimentNo;
+
 
     public SaleRecord(String date, String salePerson, String customerName, String carMake, String carModel, int carYear,
-                      double salePrice, double comissionRate, double comissionEarned) {
+                      double salePrice, double comissionRate, double comissionEarned, int experimentNo) {
         this.date = date;
         this.salesPerson = salePerson;
         this.customerName = customerName;
@@ -23,12 +24,17 @@ public class SaleRecord {
         this.salePrice = salePrice;
         this.comissionRate = comissionRate;
         this.comissionEarned = comissionEarned;
+        this.experimentNo = experimentNo;
 
     }
 
-
-
-
+    public static int hashLastName(String lastName) {
+        int hashVal = 0;
+        for (char ch : lastName.toCharArray()) {
+            hashVal += ch;
+        }
+        return hashVal;
+    }
 
     /**
      * @return String
@@ -67,23 +73,29 @@ public class SaleRecord {
 
     @Override
     public String toString() {
-        return "{"+date + ", " + salesPerson + ", " + customerName + ", " + carMake + ", " + carModel + ", " + carYear +
+        return "{" + date + ", " + salesPerson + ", " + customerName + ", " + carMake + ", " + carModel + ", " + carYear +
                 ", " + salePrice
-                + ", " + comissionRate + ", " + comissionEarned+"}";
+                + ", " + comissionRate + ", " + comissionEarned + "}";
     }
 
     public double getCommissionEarned() {
         return comissionEarned;
     }
 
-    public String getCustomerLastName(){
+    public String getCustomerLastName() {
         return customerName.substring(customerName.lastIndexOf(" ") + 1);
 
     }
 
     @Override
-    public int hashCode(){
-        return customerName.substring(customerName.lastIndexOf(" ") + 1).hashCode();
+    public int hashCode() {
+        if (experimentNo == 1 || experimentNo == 2) {
+            return customerName.substring(customerName.lastIndexOf(" ") + 1).hashCode();
+        } else if (experimentNo == 3) {
+            return hashLastName(getCustomerLastName());
+        } else {
+            return hashLastName(getSalePersonLastName());
+        }
     }
 
     public String getSalePersonLastName() {

@@ -11,21 +11,20 @@ import java.util.LinkedList;
  * handles collisions using chaining, and reports the average number of comparisons during searches.
  * Additionally, the hash map is resized when the loading factor exceeds a specified threshold.
  */
-public class Main {
-    static final String file = "src/car_sales_data.csv";
+public class Program9 {
     // Constant variables
     private static final int DEFAULT_CAPACITY = 16;
-
     // Customer last name will be the key
     private static final float DEFAULT_LOAD_FACTOR = 2f;
+    static String file;
     static ArrayList<SaleRecord> arrayList = new ArrayList<>();
     static int experiment = 0;
     static HashMap<String, LinkedList<SaleRecord>> hashMap;
     static long secondsTaken = 0;
 
-    public Main(int experiment) {
+    public Program9(int experiment) {
         hashMap = new HashMap<>(DEFAULT_CAPACITY, DEFAULT_LOAD_FACTOR);
-        Main.experiment = experiment;
+        Program9.experiment = experiment;
     }
 
 
@@ -97,6 +96,20 @@ public class Main {
                 int comparisons = searchInHashMap(hashMap, keyToSearch);
                 totalComparisons += comparisons;
             }
+        } else if (experiment == 3) {
+            for (SaleRecord record : arrayList) {
+                String keyToSearch = record.getCustomerName();
+                // Search the hash map
+                int comparisons = searchInHashMap(hashMap, keyToSearch);
+                totalComparisons += comparisons;
+            }
+        } else if (experiment == 4) {
+            for (SaleRecord record : arrayList) {
+                String keyToSearch = record.getSalePersonLastName();
+                // Search the hash map
+                int comparisons = searchInHashMap(hashMap, keyToSearch);
+                totalComparisons += comparisons;
+            }
         }
         return (double) totalComparisons / numberOfSearches;
     }
@@ -111,11 +124,14 @@ public class Main {
     private static int searchInHashMap(HashMap<String, LinkedList<SaleRecord>> hashMap, String keyToSearch) {
         int comp = 0;
         for (HashMap.Entry<String, LinkedList<SaleRecord>> entry : hashMap.entrySet()) {
+            //extract the linked list we want from hashmap
             LinkedList<SaleRecord> namesList = entry.getValue();
             if (namesList.equals(hashMap.get(keyToSearch))) {
+                //if found, add a comparison and return it
                 comp++;
                 return comp;
             } else {
+                //not found, keep searching
                 comp++;
             }
 
@@ -124,17 +140,21 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        file = args[0];
         printExperiment(1);
         printExperiment(2);
+        printExperiment(3);
+        printExperiment(4);
+
     }
 
     public static void printExperiment(int experimentNo) {
-        Main experiment = new Main(experimentNo);
-        experiment.insert(file);
+        Program9 experiment = new Program9(experimentNo);
+        experiment.insert(file, experimentNo);
         double comp = search(hashMap, arrayList);
 
         System.out.println("Experiment: " + experimentNo);
-        System.out.println(secondsTaken + " milli seconds taken to build the HashMap");
+        System.out.println((secondsTaken / 1000) + " seconds taken to build the HashMap");
         System.out.println("Average number of comparisons: " + comp + " - table size " + hashMap.size());
     }
 
@@ -143,7 +163,7 @@ public class Main {
      *
      * @param csvFile the path to the CSV file containing SaleRecord data
      */
-    public void insert(String csvFile) {
+    public void insert(String csvFile, int experimentNo) {
         long startTime = System.currentTimeMillis();
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             br.readLine(); // Skip the header row
@@ -151,7 +171,9 @@ public class Main {
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
                 // Assuming the order of columns in the CSV matches the constructor
-                final SaleRecord saleRecord = new SaleRecord(data[0], data[1], data[2], data[3], data[4], Integer.parseInt(data[5]), Double.parseDouble(data[6]), Double.parseDouble(data[7]), Double.parseDouble(data[8]));
+                final SaleRecord saleRecord = new SaleRecord(data[0], data[1], data[2], data[3], data[4],
+                        Integer.parseInt(data[5]), Double.parseDouble(data[6]), Double.parseDouble(data[7]),
+                        Double.parseDouble(data[8]), experimentNo);
 
                 // Gets the customer last name from CSV (used in the first experiment)
                 // Handles collisions
